@@ -1,7 +1,12 @@
 package com.example.springedu2;
 
+import com.example.springedu2.dto.MemberCreateForm;
 import com.example.springedu2.entity.Member;
+import com.example.springedu2.entity.Role;
 import com.example.springedu2.repository.MemberRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,11 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
-
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
@@ -37,4 +40,48 @@ public class MemberService implements UserDetailsService {
                 .build();
         return  user;
     }
+
+    // ---------------------------------------------------
+
+    // 일반 유저 회원가입
+    public Member register(MemberCreateForm memberForm) {
+        memberForm.setRole(Role.USER.name());
+        return create(memberForm);
+    }
+
+    // 회원가입
+    @Transactional
+    private Member create(MemberCreateForm memberForm) {
+        // 기존 회원인지 조회
+        validNewMember(memberForm.getUsername(), memberForm.getEmail());
+
+        Member member = new Member();
+        member.setUsername( memberForm.getUsername());
+        member.setPassword(passwordEncoder.encode(memberForm.getPassword()));
+        member.setName(memberForm.getName());
+        member.setEmail(memberForm.getEmail());
+        member.setRole( parseRole(member.getRole().name()) );
+        member.setEnabled( true );
+
+        return memberRepository.save(member); // save 괄호안에는 Entity 만 올 수 있음(memberForm은 Entity 가 안붙은 놈이기 때문에 안됨)
+    }
+
+    // 기존 회원인지 체크
+    private void validNewMember(String username, String email) {
+        if (memberRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("이미 사용중인 아이디입니다.");
+        }
+        if(memberRepository.existsByEmailIgnoreCase(email)) {
+            throw new IllegalArgumentException("이미 사용중인 이메일입니다.");
+        }
+    }
+
+    // 권한 문자열 변환 "ADMIN" -> Role.ADMIN
+    private Role parseRole(String role) {
+        if (role == null || role.isBlank()) {
+            return Role.USER;
+        }
+        return Role.valueOf(role.toUpperCase());
+    }
+
 }
