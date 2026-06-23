@@ -64,7 +64,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")  // 기본값이 /login 생략가능
                          //  Post /login  로그인처리
                          //  Spring Security 가 username, password 읽어서 인증처리한다 : 자동
-                         //  UserDetailsService 안의 loadUserByusername() 를 실행해서 db 검색 로그인처리까지 진행
+                         //  UserDetailsService 안의 loadUserByUsername() 를 실행해서 db 검색 로그인처리까지 진행
 
                         .defaultSuccessUrl("/visitorMain.html", true)
                         // 로그인 성공하면 "/" 나 "/visitorMain.html"
@@ -80,7 +80,7 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
-                        .invalidateHttpSession(true)
+                        .invalidateHttpSession(true) // 세션 초기화
                         .deleteCookies("JSEESIONID")
                 )
                 .exceptionHandling(

@@ -22,7 +22,6 @@ GlobalModelAttributeAdvice는 모든 MVC 컨트롤러 실행 전에 공통으로
  로그인 상태와 관리자 여부를 Model에 담아 Thymeleaf 화면에서 사용할 수 있게 해주는 클래스입니다.
  */
 
-// AOP :
 @ControllerAdvice(annotations = Controller.class)
 public class GlobalModelAttributeAdvice {
 
