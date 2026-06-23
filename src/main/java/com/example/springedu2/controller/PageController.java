@@ -15,10 +15,15 @@ public class PageController {
     // @PostMapping("/login") 은 security filter 가 처리하므로 코딩X
     // db 처리로직을 별도의 클래스에 구현해서 security 가 자동으로 호출처리
     // UserDetailsService 에서 loadUserByUsername() 실행조회 결과 반환
-    // UserDetails 객체의 User 로 저장해서 SrpingSecurity 에게 보낸다 : 로그인 Ok
+    // UserDetails 객체의 User 로 저장해서 SpringSecurity 에게 보낸다 : 로그인 Ok
 
     @GetMapping("/access-denied")
     public String accessDenied() {
         return "access-denied";    // access-denied.html
+    }
+
+    @GetMapping("/visitorMain.html")
+    public String visitorMain() {
+        return "visitorMain";
     }
 }
