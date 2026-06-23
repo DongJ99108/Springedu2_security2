@@ -66,22 +66,22 @@ public class MemberService implements UserDetailsService {
 
     // 일반 유저 회원가입
     public Member register(MemberCreateForm memberForm) {
-        memberForm.setRole(Role.USER.name());
+        memberForm.setRole( Role.USER.name() );
         return create(memberForm);
     }
 
     // 회원가입
     @Transactional
-    private Member create(MemberCreateForm memberForm) {
+    public Member create(MemberCreateForm memberForm) {
         // 기존 회원인지 조회
         validNewMember(memberForm.getUsername(), memberForm.getEmail());
 
         Member member = new Member();
-        member.setUsername( memberForm.getUsername());
-        member.setPassword(passwordEncoder.encode(memberForm.getPassword()));
-        member.setName(memberForm.getName());
-        member.setEmail(memberForm.getEmail());
-        member.setRole( parseRole(member.getRole().name()) );
+        member.setUsername( memberForm.getUsername() );
+        member.setPassword( passwordEncoder.encode( memberForm.getPassword() ) );
+        member.setName( memberForm.getName() );
+        member.setEmail( memberForm.getEmail() );
+        member.setRole( parseRole( memberForm.getRole() ) );
         member.setEnabled( true );
 
         return memberRepository.save(member); // save 괄호안에는 Entity 만 올 수 있음(memberForm은 Entity 가 안붙은 놈이기 때문에 안됨)

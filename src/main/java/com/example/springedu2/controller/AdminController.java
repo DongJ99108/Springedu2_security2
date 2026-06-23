@@ -3,10 +3,14 @@ package com.example.springedu2.controller;
 import com.example.springedu2.Service.MemberService;
 import com.example.springedu2.dto.MemberCreateForm;
 import com.example.springedu2.entity.Member;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -25,15 +29,28 @@ public class AdminController {
         return "memberList"; // memberList.html
     }
 
-    /*
-    // 회원추가
+    // 회원추가(관리자가)
     @PostMapping("/admin/members")
-    public String addCreate(MemberCreateForm memberCreateForm) {
+    @Transactional
+    public String addCreate(
+            @Valid @ModelAttribute("memberForm") MemberCreateForm memberCreateForm,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "memberAdminForm"; // 다시 입력 받아라
+        }
 
+        // 새 회원 추가 관리자가
+        try {
+            memberService.create(memberCreateForm);
+        } catch (IllegalArgumentException e) {
+            bindingResult.reject("createFail", e.getMessage());
+            return "memberAdminForm"; // 회원 추가 실패 -> 다시 추가 화면으로 이동
+        }
+
+        return "redirect:/admin/members"; // 목록조회
     }
-    */
 
-    // 회원추가
+    // 회원추가를 위해 입력받는 화면
     @GetMapping("/admin/members/new")
     public String adminCreateForm(Model model) {
         model.addAttribute("memberForm", new MemberCreateForm());
