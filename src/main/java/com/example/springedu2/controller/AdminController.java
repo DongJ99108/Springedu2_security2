@@ -6,6 +6,7 @@ import com.example.springedu2.dto.MemberUpdateForm;
 import com.example.springedu2.entity.Member;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -100,4 +102,35 @@ public class AdminController {
         return "redirect:/admin/members";
     }
 
+    // 관리자가 회원 삭제
+    @PostMapping("/admin/members/{id}/delete")
+    public String adminDelete(
+            @PathVariable Long id,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes // 1회성 메시지 전달할 수 있게 하는
+    ) {
+
+        try {
+            memberService.delete(id, authentication.getName());
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("msg", e.getMessage());
+        }
+
+        return "redirect:/admin/members";
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
