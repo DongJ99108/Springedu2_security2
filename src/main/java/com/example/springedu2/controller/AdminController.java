@@ -2,6 +2,7 @@ package com.example.springedu2.controller;
 
 import com.example.springedu2.Service.MemberService;
 import com.example.springedu2.dto.MemberCreateForm;
+import com.example.springedu2.dto.MemberUpdateForm;
 import com.example.springedu2.entity.Member;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -55,6 +57,47 @@ public class AdminController {
     public String adminCreateForm(Model model) {
         model.addAttribute("memberForm", new MemberCreateForm());
         return "memberAdminForm"; // memberAdminForm.html
+    }
+
+    // 회원 정보 수정 - 입력받는 화면으로 이동할 주소
+    // /admin/members/1/edit
+    @GetMapping("/admin/members/{id}/edit")
+    public String adminEditForm(
+            @PathVariable Long id,
+            Model model
+    ) {
+        // 수정을 위한 DB 데이터를 Entity 조회
+        Member           member     = memberService.findById(id);
+        // DB 에서 조회한 member -> memberAdminEditForm 에서 사용할 객체인 MemberUpdateForm 구조로 변경
+        MemberUpdateForm memberForm = memberService.toUpdateForm(member);
+        model.addAttribute("member",     member); // 조회한 정보
+        model.addAttribute("memberForm", memberForm);
+        return "memberAdminEditForm"; // memberAdminEditForm.html
+    }
+
+    // 넘어온 수정 정보를 가지고 member 정보를 수정
+    @PostMapping("/admin/members/{id}/edit")
+    public String adminEdit(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("memberForm") MemberUpdateForm form,
+            BindingResult bindingResult,
+            Model model
+    ) {
+
+        // 넘어온 정보로 수정한다.
+        Member member = memberService.findById(id);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("memberForm", member);
+            return "memberAdminEditForm";
+        }
+        try{
+            memberService.update(id, form, true);
+        } catch(IllegalArgumentException e) {
+            bindingResult.reject("updateFail", e.getMessage());
+            model.addAttribute("member", member);
+            return "memberAdminEditForm";
+        }
+        return "redirect:/admin/members";
     }
 
 }

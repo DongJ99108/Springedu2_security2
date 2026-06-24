@@ -81,11 +81,11 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true) // 세션 초기화
-                        .deleteCookies("JSEESIONID")
+                        .deleteCookies("JSESSIONID")
                 )
                 .exceptionHandling(
                         exception ->
-                                exception.accessDeniedPage("/access-denied")
+                                exception.accessDeniedPage("/access-denied") // access-denied.html
                 );  // 접근 거부 페이지 처리
         return http.build();
 

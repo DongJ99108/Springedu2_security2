@@ -2,12 +2,12 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Springboot4 방명록</title>
+    <title>Springboot4 방명녹</title>
     <link rel="stylesheet" href="/css/visitor.css" />
 </head>
 <body>
-    <h1>방명록</h1>
-    <p>로그인한 사용자만 사용할 수 있습니다. 수정/삭제외 회원관리는 ADMIN 권한만 가능합니다.</p>
+    <h1>방명녹</h1>
+    <p>로그이난 사용자만 사용할 수 이씁니다. 수정/삭제 외 회원괄리는 ADMIN 궈난만 가능합니다.</p>
     <p>
         <span th:if="${loggedIn}">로그인 상태입니다.</span>
         <span th:if="${!loggedIn}">로그인하지 않았습니다.</span>
@@ -18,9 +18,7 @@
         님
     </p>
     <p>
-        관리자:
-        <span th:text="${isAdmin}"></span>
-        님
+        <span th:text="${isAdmin} ? '반갑습니다 관리자님' : '관리자가 아닙니다'"></span>
     </p>
     <hr>
     <a href="/vlist"><button>방명록 리스트 보기</button></a>

@@ -127,7 +127,6 @@ public class VisitorController {
         entity.setName(visitor.getName());
         entity.setMemo(visitor.getMemo());
         return "redirect:/vlist";
-
     }
 
     // /vdelete
